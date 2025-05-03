@@ -1,0 +1,268 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+    "name": "Wishlist API",
+    "description": "Coleção Postman para testar a API de Wishlist",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Adicionar Produto",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"productId\": \"prod1\",\n    \"name\": \"Smartphone XYZ\",\n    \"price\": 1999.99\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/wishlist/cliente1/products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "wishlist",
+            "cliente1",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Adicionar Segundo Produto",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"productId\": \"prod2\",\n    \"name\": \"Notebook ABC\",\n    \"price\": 4599.99\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/wishlist/cliente1/products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "wishlist",
+            "cliente1",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Tentar Adicionar Produto Duplicado",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"productId\": \"prod1\",\n    \"name\": \"Smartphone XYZ\",\n    \"price\": 1999.99\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/wishlist/cliente1/products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "wishlist",
+            "cliente1",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Consultar Wishlist Completa",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/wishlist/cliente1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "wishlist",
+            "cliente1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Verificar se Produto Existe na Wishlist (Existente)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/wishlist/cliente1/products/prod1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "wishlist",
+            "cliente1",
+            "products",
+            "prod1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Verificar se Produto Existe na Wishlist (Não Existente)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/wishlist/cliente1/products/prod99",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "wishlist",
+            "cliente1",
+            "products",
+            "prod99"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Remover Produto da Wishlist",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/wishlist/cliente1/products/prod1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "wishlist",
+            "cliente1",
+            "products",
+            "prod1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Testar Limite Máximo de 20 Produtos",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n    {\n        \"productId\": \"prod1\",\n        \"name\": \"Produto 1\",\n        \"price\": 10.0\n    },\n    {\n        \"productId\": \"prod2\",\n        \"name\": \"Produto 2\",\n        \"price\": 20.0\n    },\n    {\n        \"productId\": \"prod3\",\n        \"name\": \"Produto 3\",\n        \"price\": 30.0\n    },\n    {\n        \"productId\": \"prod4\",\n        \"name\": \"Produto 4\",\n        \"price\": 40.0\n    },\n    {\n        \"productId\": \"prod5\",\n        \"name\": \"Produto 5\",\n        \"price\": 50.0\n    },\n    {\n        \"productId\": \"prod6\",\n        \"name\": \"Produto 6\",\n        \"price\": 60.0\n    },\n    {\n        \"productId\": \"prod7\",\n        \"name\": \"Produto 7\",\n        \"price\": 70.0\n    },\n    {\n        \"productId\": \"prod8\",\n        \"name\": \"Produto 8\",\n        \"price\": 80.0\n    },\n    {\n        \"productId\": \"prod9\",\n        \"name\": \"Produto 9\",\n        \"price\": 90.0\n    },\n    {\n        \"productId\": \"prod10\",\n        \"name\": \"Produto 10\",\n        \"price\": 100.0\n    },\n    {\n        \"productId\": \"prod11\",\n        \"name\": \"Produto 11\",\n        \"price\": 110.0\n    },\n    {\n        \"productId\": \"prod12\",\n        \"name\": \"Produto 12\",\n        \"price\": 120.0\n    },\n    {\n        \"productId\": \"prod13\",\n        \"name\": \"Produto 13\",\n        \"price\": 130.0\n    },\n    {\n        \"productId\": \"prod14\",\n        \"name\": \"Produto 14\",\n        \"price\": 140.0\n    },\n    {\n        \"productId\": \"prod15\",\n        \"name\": \"Produto 15\",\n        \"price\": 150.0\n    },\n    {\n        \"productId\": \"prod16\",\n        \"name\": \"Produto 16\",\n        \"price\": 160.0\n    },\n    {\n        \"productId\": \"prod17\",\n        \"name\": \"Produto 17\",\n        \"price\": 170.0\n    },\n    {\n        \"productId\": \"prod18\",\n        \"name\": \"Produto 18\",\n        \"price\": 180.0\n    },\n    {\n        \"productId\": \"prod19\",\n        \"name\": \"Produto 19\",\n        \"price\": 190.0\n    },\n    {\n        \"productId\": \"prod20\",\n        \"name\": \"Produto 20\",\n        \"price\": 200.0\n    }\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/wishlist/cliente2/products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "wishlist",
+            "cliente2",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Tentar Adicionar 21º Produto",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"productId\": \"prod21\",\n    \"name\": \"Produto 21\",\n    \"price\": 210.0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/wishlist/cliente2/products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "wishlist",
+            "cliente2",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    }
+  ]
+}
