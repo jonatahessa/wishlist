@@ -22,18 +22,11 @@ public class Wishlist {
     @Builder.Default
     private List<Product> products = new ArrayList<>();
 
-    public boolean isFull() {
-        return products.size() >= 20;
-    }
-
     public boolean containsProduct(String productId) {
         return products.stream().anyMatch(p -> p.getProductId().equals(productId));
     }
 
     public void addProduct(Product product) {
-        if (isFull()) {
-            throw new IllegalStateException("Wishlist has reached the maximum limit of 20 products");
-        }
         if (containsProduct(product.getProductId())) {
             throw new IllegalArgumentException("Product already exists in the wishlist");
         }

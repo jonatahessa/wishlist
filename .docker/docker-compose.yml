@@ -1,25 +1,32 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:6.0
+    container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 5s
       timeout: 10s
       retries: 5
 
-  app:
-    build: .
+  wishlist:
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile
+    container_name: wishlist-app
     ports:
       - "8080:8080"
+      - "8000:8000"
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/wishlist
-      - SPRING_PROFILES_ACTIVE=dev
+      SPRING_DATA_MONGODB_URI: mongodb://root:example@mongodb:27017/wishlist?authSource=admin
+      SPRING_PROFILES_ACTIVE: dev
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000
     depends_on:
       mongodb:
         condition: service_healthy

@@ -1,19 +1,26 @@
 package com.jonata.wishlist.application;
 
 import com.jonata.wishlist.domain.entity.Wishlist;
+import com.jonata.wishlist.domain.exception.BusinessException;
+import com.jonata.wishlist.domain.exception.NotFoundException;
+import com.jonata.wishlist.domain.exception.WishlistLimitExceededException;
 import com.jonata.wishlist.domain.repository.WishlistRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -23,93 +30,106 @@ class WishlistServiceTest {
     @Mock
     private WishlistRepository wishlistRepository;
 
-    @InjectMocks
     private WishlistService wishlistService;
 
+    @BeforeEach
+    void setUp() {
+        wishlistService = new WishlistService(wishlistRepository);
+        ReflectionTestUtils.setField(wishlistService, "maxWishlistSize", 2);
+    }
+
     @Test
-    void shouldAddProductToNewWishlist() {
-        String customerId = "customer1";
-        Wishlist.Product product = Wishlist.Product.builder()
-                .productId("prod1")
-                .build();
+    void addProduct_shouldAddProductSuccessfully() {
+        String customerId = "c1";
+        Wishlist.Product product = Wishlist.Product.builder().productId("p1").build();
 
         when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
-        when(wishlistRepository.save(any(Wishlist.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(wishlistRepository.save(any(Wishlist.class))).thenAnswer(i -> i.getArgument(0));
 
         Wishlist result = wishlistService.addProduct(customerId, product);
 
-        assertNotNull(result);
-        assertEquals(customerId, result.getCustomerId());
-        assertEquals(1, result.getProducts().size());
-        assertEquals("prod1", result.getProducts().get(0).getProductId());
-        verify(wishlistRepository).save(any(Wishlist.class));
+        assertTrue(result.containsProduct("p1"));
+        verify(wishlistRepository).save(result);
     }
 
     @Test
-    void shouldAddProductToExistingWishlist() {
-        String customerId = "customer1";
-        Wishlist.Product product = Wishlist.Product.builder()
-                .productId("prod2")
-                .build();
+    void addProduct_shouldThrowExceptionWhenProductExists() {
+        String customerId = "c1";
+        Wishlist.Product product = Wishlist.Product.builder().productId("p1").build();
 
-        Wishlist existingWishlist = Wishlist.builder()
-                .customerId(customerId)
-                .build();
-        existingWishlist.addProduct(Wishlist.Product.builder()
-                .productId("prod1")
-                .build());
+        List<Wishlist.Product> products = new ArrayList<>();
+        products.add(product);
 
-        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(existingWishlist));
-        when(wishlistRepository.save(any(Wishlist.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        Wishlist existing = Wishlist.builder().customerId(customerId).products(products).build();
 
-        Wishlist result = wishlistService.addProduct(customerId, product);
+        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(existing));
 
-        assertEquals(2, result.getProducts().size());
-        verify(wishlistRepository).save(existingWishlist);
+        assertThrows(BusinessException.class, () -> wishlistService.addProduct(customerId, product));
     }
 
     @Test
-    void shouldRemoveProductFromWishlist() {
-        String customerId = "customer1";
-        String productId = "prod1";
+    void addProduct_shouldThrowExceptionWhenLimitExceeded() {
+        String customerId = "c1";
+        Wishlist.Product product1 = Wishlist.Product.builder().productId("p1").build();
+        Wishlist.Product product2 = Wishlist.Product.builder().productId("p2").build();
+        Wishlist.Product newProduct = Wishlist.Product.builder().productId("p3").build();
 
-        Wishlist wishlist = Wishlist.builder()
-                .customerId(customerId)
-                .build();
-        wishlist.addProduct(Wishlist.Product.builder()
-                .productId(productId)
-                .build());
+        List<Wishlist.Product> products = new ArrayList<>(List.of(product1, product2));
+        Wishlist existing = Wishlist.builder().customerId(customerId).products(products).build();
+
+        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(existing));
+
+        assertThrows(WishlistLimitExceededException.class, () -> wishlistService.addProduct(customerId, newProduct));
+    }
+
+    @Test
+    void removeProduct_shouldRemoveSuccessfully() {
+        String customerId = "c1";
+        Wishlist.Product product = Wishlist.Product.builder().productId("p1").build();
+
+        List<Wishlist.Product> products = new ArrayList<>();
+        products.add(product);
+
+        Wishlist wishlist = Wishlist.builder().customerId(customerId).products(products).build();
 
         when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wishlist));
 
-        wishlistService.removeProduct(customerId, productId);
+        wishlistService.removeProduct(customerId, "p1");
 
-        assertTrue(wishlist.getProducts().isEmpty());
-        verify(wishlistRepository).save(wishlist);
+        verify(wishlistRepository).save(any(Wishlist.class));
+        assertFalse(wishlist.containsProduct("p1"));
     }
 
     @Test
-    void shouldGetEmptyWishlistWhenNotFound() {
-        String customerId = "customer1";
+    void removeProduct_shouldThrowWhenNotFound() {
+        when(wishlistRepository.findByCustomerId("c1")).thenReturn(Optional.empty());
 
-        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
-
-        Wishlist result = wishlistService.getWishlist(customerId);
-
-        assertEquals(customerId, result.getCustomerId());
-        assertTrue(result.getProducts().isEmpty());
+        assertThrows(NotFoundException.class, () -> wishlistService.removeProduct("c1", "p1"));
     }
 
     @Test
-    void shouldCheckProductPresenceInWishlist() {
-        String customerId = "customer1";
-        String productId = "prod1";
+    void getWishlist_shouldReturnWishlist() {
+        Wishlist wishlist = Wishlist.builder().customerId("c1").build();
+        when(wishlistRepository.findByCustomerId("c1")).thenReturn(Optional.of(wishlist));
 
-        when(wishlistRepository.existsProductInWishlist(customerId, productId)).thenReturn(true);
+        assertEquals(wishlist, wishlistService.getWishlist("c1"));
+    }
 
-        boolean result = wishlistService.isProductInWishlist(customerId, productId);
+    @Test
+    void isProductInWishlist_shouldReturnTrueWhenPresent() {
+        Wishlist.Product product = Wishlist.Product.builder().productId("p1").build();
+        List<Wishlist.Product> products = new ArrayList<>(List.of(product));
+        Wishlist wishlist = Wishlist.builder().customerId("c1").products(products).build();
 
-        assertTrue(result);
-        verify(wishlistRepository).existsProductInWishlist(customerId, productId);
+        when(wishlistRepository.findByCustomerId("c1")).thenReturn(Optional.of(wishlist));
+
+        assertTrue(wishlistService.isProductInWishlist("c1", "p1"));
+    }
+
+    @Test
+    void isProductInWishlist_shouldReturnFalseWhenAbsent() {
+        when(wishlistRepository.findByCustomerId("c1")).thenReturn(Optional.empty());
+
+        assertFalse(wishlistService.isProductInWishlist("c1", "p1"));
     }
 }

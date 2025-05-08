@@ -3,6 +3,7 @@ package com.jonata.wishlist.infrastructure.api;
 import com.jonata.wishlist.application.WishlistService;
 import com.jonata.wishlist.domain.entity.Wishlist;
 import com.jonata.wishlist.infrastructure.dto.ProductPresenceResponse;
+import com.jonata.wishlist.infrastructure.dto.ProductRequest;
 import com.jonata.wishlist.infrastructure.dto.ProductResponse;
 import com.jonata.wishlist.infrastructure.dto.WishlistResponse;
 import jakarta.validation.Valid;
@@ -30,7 +31,7 @@ public class WishlistController {
     @PostMapping("/{customerId}/products")
     public ResponseEntity<WishlistResponse> addProduct(
             @PathVariable String customerId,
-            @RequestBody @Valid com.jonata.wishlist.infrastructure.dto.ProductRequest productRequest) {
+            @RequestBody @Valid ProductRequest productRequest) {
 
         var product = Wishlist.Product.builder()
                 .productId(productRequest.getProductId())

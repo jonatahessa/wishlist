@@ -54,10 +54,8 @@ class WishlistControllerTest {
 
     @Test
     void shouldRemoveProductAndReturnNoContent() {
-        // O método é void e retorna 204 NO_CONTENT por padrão
         wishlistController.removeProduct("customer1", "prod1");
 
-        // Verificamos apenas que o método foi chamado sem erros
         assertDoesNotThrow(() -> wishlistController.removeProduct("customer1", "prod1"));
     }
 
