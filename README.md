@@ -1,99 +1,87 @@
-# Wishlist Service
+## Pré-requisitos
+### Docker 20.10+
 
-A REST API for managing customer wishlists built with Spring Boot and MongoDB.
+### Docker Compose 2.5+
 
-## Prerequisites
+### Java 17 (apenas para desenvolvimento)
 
-- Java 17+
-- Docker 20.10+
-- Docker Compose 2.5+
-- Maven 3.8+
+## Como Executar o Projeto
+#### 1. Clone o repositório
+   ```bash
+      git clone https://github.com/seu-usuario/wishlist.git
+      cd wishlist
+   ````
+#### 2. Construa e execute os containers
+   ```bash
+      docker-compose up -d --build
+   ```
+#### 3. Acesse a API
+   A aplicação estará disponível em:
+   http://localhost:8080
 
-## Getting Started
+### Endpoints Principais
+#### POST /api/wishlist/{customerId}/products - Adiciona produto
 
-### 1. Clone the repository
-```bash
-  git clone https://github.com/your-repo/wishlist.git
-```
-cd wishlist
-### 2. Build the project
-```bash
-  ./mvnw clean package
-```
-### 3. Running the Application
-#### Option 1: Using Docker Compose (Recommended)
-```bash
-  docker-compose up -d --build
-```
-The API will be available at:
-http://localhost:8080
+#### DELETE /api/wishlist/{customerId}/products/{productId} - Remove produto
 
-Option 2: Running Locally
-```bash
-  ./mvnw spring-boot:run
-```
-Running Tests
+#### GET /api/wishlist/{customerId} - Lista wishlist completa
 
-#### All Tests
-```bash
-  ./mvnw test
-```
-Only Unit Tests
+#### GET /api/wishlist/{customerId}/products/{productId} - Verifica se produto está na wishlist
 
-```bash
-  ./mvnw test -Dtest=*UnitTest
-```
-### Only BDD Tests (Cucumber)
-```bash
-  ./mvnw test -Dtest=CucumberIT
-```
-#### Test Reports
-After running tests, view reports at:
-target/cucumber-reports/cucumber.html
-
-### API Documentation
-Swagger UI is available at:
+## Documentação da API
+#### Acesse a interface Swagger UI em:
 http://localhost:8080/swagger-ui.html
 
-### Test Structure
-BDD features are located in:
+## Executando os Testes
+#### Testes via Docker
+``` bash
+    docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
+```
+## Visualizando relatórios
+#### Os relatórios dos testes serão gerados em:
 
-src/test/resources/features/
+target/cucumber-reports/cucumber.html
 
-    features/
-    ├── add_product.feature
-    ├── remove_product.feature
-    ├── get_wishlist.feature
-    └── check_product.feature
-### Debugging in IntelliJ
-#### Install plugins:
+#### Configuração dos Containers
+    Serviço	        Porta	Descrição
+    wishlist-app	8080	Aplicação principal
+    mongodb	        27017	Banco de dados MongoDB
+    wishlist-test	        Container para execução de testes
 
-Cucumber for Java
-
-JUnit
-
-To run BDD tests:
-
-Right-click CucumberIT.java → "Run"
-
-To debug:
-
-Set breakpoints in step definitions
-
-Run in debug mode
-
-Environment Variables
-Configuration can be modified in:
-
-application.properties (main config)
-
-application-test.properties (test config)
-
-Cleanup
-To stop and remove all containers:
-
+## Comandos Úteis
+### Parar os containers
+```bash
+  docker-compose down
+```
+### Visualizar logs da aplicação
+```bash
+  docker-compose logs -f wishlist
+```
+### Acessar o MongoDB
+```bash
+  docker exec -it mongodb mongosh -u root -p example
+```
+## Limpar ambiente completamente
 ```bash
   docker-compose down -v
 ```
-License
-This project is licensed under the MIT License.
+
+## Solução de Problemas
+Se a aplicação não iniciar
+Verifique os logs:
+
+```bash
+  docker-compose logs wishlist
+```
+Confira se o MongoDB está saudável:
+
+```bash
+  docker-compose ps
+```
+Reconstrua os containers:
+
+```bash
+  docker-compose up -d --force-recreate
+```
+Para desenvolvimento com hot-reload
+Configure sua IDE para usar o remote debug na porta 8000 quando executado via Docker.

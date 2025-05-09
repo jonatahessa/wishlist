@@ -44,7 +44,6 @@ public class WishlistStepDefinitions {
         wishlistRepository.deleteAll();
     }
 
-    // ===== Add Product Steps =====
     @Given("a customer with ID {string} has no wishlist")
     public void customer_has_no_wishlist(String customerId) {
         this.currentCustomerId = customerId;
@@ -146,7 +145,6 @@ public class WishlistStepDefinitions {
         assertFalse(wishlist.get().containsProduct(currentProductId));
     }
 
-    // ===== Get Wishlist Steps =====
     @Given("a customer with ID {string} has {int} products in their wishlist")
     public void customer_has_products_in_wishlist(String customerId, int count) {
         this.currentCustomerId = customerId;
@@ -183,7 +181,6 @@ public class WishlistStepDefinitions {
         assertEquals(count, body.getProducts().size());
     }
 
-    // ===== Check Product Steps =====
     @When("I check for product with ID {string} in the wishlist")
     public void check_product_in_wishlist(String productId) {
         this.currentProductId = productId;
@@ -213,7 +210,6 @@ public class WishlistStepDefinitions {
         assertFalse(body.isPresent());
     }
 
-    // ===== Common Steps =====
     @Then("the response should be a not found error")
     public void not_found_error() {
         assertNotNull(exception);
