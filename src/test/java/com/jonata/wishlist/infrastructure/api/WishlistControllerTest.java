@@ -32,7 +32,7 @@ class WishlistControllerTest {
 
     @Test
     void shouldAddProductAndReturnCreated() {
-        ProductRequest request = new ProductRequest("prod1", "Product 1", 100.0);
+        ProductRequest request = ProductRequest.builder().productId("prod1").name("Product 1").price(100.0).build();
         Wishlist wishlist = Wishlist.builder()
                 .customerId("customer1")
                 .build();
