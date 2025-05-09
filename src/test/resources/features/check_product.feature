@@ -6,5 +6,5 @@ Feature: Check product in wishlist
 
   Scenario: Product exists in wishlist
     Given the customer has a product with ID "prod-001" in the wishlist
-    When I check for product with ID "prod-001" in the wishlist
+    When  I check if product with ID "prod-001" is in the wishlist
     Then the response should indicate the product is present
