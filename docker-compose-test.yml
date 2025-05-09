@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mongodb-test:
+    image: mongo:6.0
+    container_name: mongodb-test-cucumber
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: test
+      MONGO_INITDB_ROOT_PASSWORD: test
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  wishlist-test:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    container_name: wishlist-test
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://test:test@mongodb-test:27017/wishlist-test?authSource=admin
+      SPRING_PROFILES_ACTIVE: test
+    depends_on:
+      mongodb-test:
+        condition: service_healthy
