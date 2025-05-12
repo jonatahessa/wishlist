@@ -13,7 +13,8 @@
    ````
 #### 2. Construa e execute os containers
    ```bash
-      docker-compose up -d --build
+      cd .docker/
+      docker compose up -d --build
    ```
 #### 3. Acesse a API
    A aplicação estará disponível em:
@@ -35,7 +36,7 @@ http://localhost:8080/swagger-ui.html
 ## Executando os Testes
 #### Testes via Docker
 ``` bash
-    docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
+    docker compose -f docker-compose.test.yml up --build --abort-on-container-exit
 ```
 ## Visualizando relatórios
 #### Os relatórios dos testes serão gerados em:
@@ -51,11 +52,11 @@ target/cucumber-reports/cucumber.html
 ## Comandos Úteis
 ### Parar os containers
 ```bash
-  docker-compose down
+  docker compose down
 ```
 ### Visualizar logs da aplicação
 ```bash
-  docker-compose logs -f wishlist
+  docker compose logs -f wishlist
 ```
 ### Acessar o MongoDB
 ```bash
@@ -63,7 +64,7 @@ target/cucumber-reports/cucumber.html
 ```
 ## Limpar ambiente completamente
 ```bash
-  docker-compose down -v
+  docker compose down -v
 ```
 
 ## Solução de Problemas
@@ -71,17 +72,17 @@ Se a aplicação não iniciar
 Verifique os logs:
 
 ```bash
-  docker-compose logs wishlist
+  docker compose logs wishlist
 ```
 Confira se o MongoDB está saudável:
 
 ```bash
-  docker-compose ps
+  docker compose ps
 ```
 Reconstrua os containers:
 
 ```bash
-  docker-compose up -d --force-recreate
+  docker compose up -d --force-recreate
 ```
 Para desenvolvimento com hot-reload
 Configure sua IDE para usar o remote debug na porta 8000 quando executado via Docker.
